@@ -507,6 +507,10 @@ footer{border-top:1px solid var(--line-soft);margin-top:40px;padding:40px 0 120p
 .ztoc-n{font-family:var(--label);font-size:11.5px;color:var(--gold);min-width:18px;text-align:center;flex:none}
 .ztoc-row.done .ztoc-n{color:var(--calm)}
 .zlec-title{font-family:var(--serif);font-weight:800;font-size:clamp(19px,3vw,24px);margin:0 0 8px;line-height:1.5}
+.nextcta{margin-top:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding:16px 18px;border:1px solid rgba(212,175,55,.28);border-radius:14px;background:rgba(212,175,55,.05)}
+.nextcta .nx-l{font-family:var(--label);font-size:12.5px;letter-spacing:.06em;color:var(--cream-dim)}
+@media(max-width:560px){.nextcta{flex-direction:column;align-items:stretch;text-align:center}.nextcta .btn{width:100%}}
 </style>
 <link rel="manifest" href="/sauna-app.webmanifest">
 <meta name="theme-color" content="#0f0d0a">
@@ -3843,6 +3847,42 @@ function chapterProgress(ch){
   const done=ch.lessons.filter(l=>S.done.includes(l.id)).length;
   return {done,total,pct:total?Math.round(done/total*100):0};
 }
+/* ── 次の未完了レッスン探索 ── */
+function orderedChapters(){
+  const out=[];
+  TIERS.forEach(t=>{chaptersOfTier(t.id).forEach(c=>out.push(c));});
+  CONTENT.chapters.forEach(c=>{if(out.indexOf(c)<0)out.push(c);});
+  return out;
+}
+function firstOpenLesson(ch,skipId){
+  if(!tierUnlocked(ch.tier))return null;
+  for(let i=0;i<ch.lessons.length;i++){
+    const l=ch.lessons[i];
+    if(skipId&&l.id===skipId)break;
+    if(!S.done.includes(l.id))return l;
+  }
+  return null;
+}
+function nextIncomplete(fromChId,skipId){
+  const list=orderedChapters();
+  if(!list.length)return null;
+  let start=list.findIndex(c=>c.id===fromChId); if(start<0)start=0;
+  for(let k=0;k<list.length;k++){
+    const ch=list[(start+k)%list.length];
+    const ls=firstOpenLesson(ch,k===0?skipId:null);
+    if(ls)return {ch:ch,ls:ls};
+  }
+  return null;
+}
+function chapterNextCTA(ch){
+  const n=nextIncomplete(ch.id);
+  if(!n)return '<div class="nextcta"><span class="nx-l">🎓 学べるレッスンはすべて修了しました</span><button class="btn ghost" onclick="go(\'learn\')">カリキュラムへ →</button></div>';
+  const same=n.ch.id===ch.id;
+  const tm=tierMeta(n.ch.tier);
+  const lead=same?"つづきから":("次の未完了レッスン ・ "+esc(n.ch.title));
+  return '<div class="nextcta"><span class="nx-l">'+tm.icon+' '+lead+'</span>'+
+    '<button class="btn gold" onclick="go(\'lesson\',{ch:\''+n.ch.id+'\',ls:\''+n.ls.id+'\'})">'+esc(n.ls.title)+' →</button></div>';
+}
 function totalLessons(){return CONTENT.chapters.reduce((a,c)=>a+c.lessons.length,0);}
 function totalQuestions(){return QUIZ_BANK.length;}
 /* ── ルーター ── */
@@ -4023,6 +4063,7 @@ function renderChapter(chId){
       <span style="font-family:var(--label);color:var(--cream-dim);font-size:13px;white-space:nowrap">${p.done}/${p.total} 完了</span>
     </div>
     <div class="lesson-list">${rows}</div>
+    ${chapterNextCTA(ch)}
     ${["ch30","ch31","ch33","ch34","ch36","ch37"].indexOf(ch.id)>=0?zemiFunnelHTML():""}
   </div></section>`;
 }
@@ -4050,6 +4091,11 @@ function renderLesson(chId,lsId){
   const prev=idx>0?ch.lessons[idx-1]:null;
   const next=idx<ch.lessons.length-1?ch.lessons[idx+1]:null;
   const alreadyDone=S.done.includes(ls.id);
+  const beyond=next?null:nextIncomplete(ch.id,ls.id);
+  const doneLabel=next
+    ?(alreadyDone?"✓ 完了済み ・ 次へ →":"このレッスンを完了 →")
+    :(beyond?(alreadyDone?"✓ 完了済み ・ 次へ："+esc(beyond.ch.title)+" →":"このレッスンを完了 ・ 次の章へ →")
+            :(alreadyDone?"✓ 完了済み ・ 章にもどる":"このレッスンを完了 →"));
   document.getElementById("view-lesson").innerHTML=`<section class="section"><div class="wrap reader">
     <div class="backlink" onclick="go('chapter','${ch.id}')">‹ ${esc(ch.title)}</div>
     <div class="r-eyebrow" style="color:${tm.color}">${tm.icon} ${tm.name} ・ LESSON ${idx+1}</div>
@@ -4067,7 +4113,7 @@ function renderLesson(chId,lsId){
     </div>
     <div class="lesson-nav">
       ${prev?`<button class="btn ghost" onclick="go('lesson',{ch:'${ch.id}',ls:'${prev.id}'})">‹ 前のレッスン</button>`:`<span></span>`}
-      <button class="btn gold" id="lessonDone" onclick="completeLesson()" ${(!alreadyDone&&(ls.quiz||[]).length)?'disabled':''}>${alreadyDone?'✓ 完了済み ・ 次へ':'このレッスンを完了 →'}</button>
+      <button class="btn gold" id="lessonDone" onclick="completeLesson()" ${(!alreadyDone&&(ls.quiz||[]).length)?'disabled':''}>${doneLabel}</button>
     </div>
   </div></section>`;
 }
@@ -4153,8 +4199,13 @@ function completeLesson(){
   }
   const idx=ch.lessons.indexOf(ls);
   const next=ch.lessons[idx+1];
-  if(next)go("lesson",{ch:ch.id,ls:next.id});
-  else go("chapter",ch.id);
+  if(next){go("lesson",{ch:ch.id,ls:next.id});return;}
+  const n=nextIncomplete(ch.id);
+  if(n){
+    if(n.ch.id!==ch.id)toast("➡️","「"+ch.title+"」修了！次は「"+n.ch.title+"」");
+    go("lesson",{ch:n.ch.id,ls:n.ls.id});return;
+  }
+  go("chapter",ch.id);
 }
 /* ── 修了証 ── */
 function renderCert(tid){
