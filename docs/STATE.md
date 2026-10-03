@@ -16,7 +16,7 @@
 - 判断と理由：本のリンクはサウナ大学で使っている ASIN 447811031X を流用し、書誌情報で『医者が教えるサウナの教科書』（『サウナ大全』とは別の本）であることを確認した。
 - 確認結果：差分は追加だけ（置き換えはプライバシーポリシー1行・サウナ大学1行のみ）。`gen_reviews.py` を再実行しても `reviews/index.html` は一致。`build_rankings.py --check`、`check_url_data.py`、`build_map_data.py --check` に合格。スマホ幅（390px）でAmazon枠・フッター・サウナ大学のフッターを表示確認し、横はみ出し0。Amazonリンク3本とも `tag=gomirachelin-22` 付きで開くことを確認。
 - 変更ファイル：`css/site.css`、`scripts/gen_reviews.py`、`sauna-daigaku.html`、共通フッターを持つHTML 58ページ（レビュー記事47本には枠も追加、プライバシーポリシーは本文も修正）、`docs/STATE.md`、`docs/AI引き継ぎ.md`、`docs/GitHub移行ロードマップ.md`、`docs/roadmap.html`。
-- 公開状況：GitHub Pages（`https://kenji0618y.github.io/`）向けの変更。独自ドメイン `sauna-cospa.com` はConoHaの旧版を表示しているため、ドメインを切り替えるまで本番ドメインには出ない。ConoHa、DNS、GAS、Google Sheetsは変更していない。
+- 公開状況：コミット `2220499` をmainへpushし、公開URL `https://kenji0618y.github.io/` で確認済み（トップ、テルマー湯、神戸サウナ、スカイスパ、プライバシーポリシー、レビュー一覧、サウナ大学に表記とAmazon枠が出ていること、スマホ幅で横はみ出し0）。独自ドメイン `sauna-cospa.com` はConoHaの旧版を表示しているため、ドメインを切り替えるまで本番ドメインには出ない。ConoHa、DNS、GAS、Google Sheetsは変更していない。
 - 残作業（Amazon審査のため）：
   1. 本審査では登録サイト（`sauna-cospa.com`）が見られる。現在の `sauna-cospa.com/reviews/` は404（GitHub版は正常）なので、3件目の売上が出る前に独自ドメインをGitHub Pagesへ切り替える（フェーズ4・5）。
   2. Amazonの管理画面で登録サイトを確認する。旧 `saunagomirachelin.wordpress.com` は「Coming Soon」表示なので、登録に残っていれば外す。
