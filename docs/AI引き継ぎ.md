@@ -1,6 +1,14 @@
 # AI引き継ぎ
 
-最終更新：2026-10-03
+最終更新：2026-10-06
+
+## 2026-10-06 Claude 独自ドメインをGitHub Pagesへ切替
+
+- `sauna-cospa.com` はGitHub Pagesで配信中（`CNAME` 追加 `2764d1c`、ConoHaのDNSで apex の A を GitHub の4件へ、www を CNAME `kenji0618y.github.io` へ）。証明書発行済み、Enforce HTTPS オン。
+- メール関係（MX、SPF、DKIM、`mail`・`ml-cp` の A）とNSは触っていない。DNSのホストは引き続きConoHa。
+- 戻し方と切替前後の値は `docs/dns-mail-公開記録.md`。
+- これからは `main` へのpushがそのまま本番 `https://sauna-cospa.com/` に出る。ConoHaへのアップロードは不要（ConoHaは復旧用に残すだけ）。
+- 次の1手：30日監視（2026-11-05ごろまで）。ConoHa解約はAmazon本審査の完了後。解約前にDNSの置き場所とConoHaメールの扱いを決める。
 
 ## 2026-10-03 Claude Amazonアソシエイト必須表記・Amazon枠
 

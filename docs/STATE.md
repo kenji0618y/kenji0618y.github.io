@@ -2,9 +2,9 @@
 
 このファイルは、サイトの現在の状況やできていること、次にやることを記録するためのドキュメントです。
 
-最終更新：2026-10-06（Claude：独自ドメインをGitHub Pagesへ切替中）
+最終更新：2026-10-06（Claude：独自ドメインをGitHub Pagesへ切替完了）
 
-## 独自ドメイン sauna-cospa.com をGitHub Pagesへ切替（2026-10-06・Claude）※進行中
+## 独自ドメイン sauna-cospa.com をGitHub Pagesへ切替（2026-10-06・Claude）※完了・30日監視中
 
 - 利用者の明示承認（2026-10-06）を得て実施。目的：Amazonアソシエイトの本審査が見る `sauna-cospa.com` をGitHub版（必須表記・Amazon枠あり、レビュー一覧404なし）にするため。
 - 手順（GitHub公式の推奨順）：①リポジトリ直下に `CNAME`（中身 `sauna-cospa.com`）を追加し、GitHub側で独自ドメインを先に登録 → ②ConoHaのDNSで、apex の A を GitHub Pages の4件へ、www を CNAME `kenji0618y.github.io` へ → ③証明書の発行を待って HTTPS を確認。
@@ -18,6 +18,16 @@
   2. ConoHaのDNSを2回に分けて保存し、どちらも「成功しました。DNS変更」を確認：(a) A `@` を 185.199.108.153 に変更し、185.199.109.153／185.199.110.153／185.199.111.153 を追加。(b) A `www`（157.120.209.148）を削除し、CNAME `www` → `kenji0618y.github.io` を追加。2回目の保存時に「A(通常) @ は一括変更されます」という確認が出たが、A `@` 4件の値は変えていないことを確認してから「はい」を押した。
   3. 保存後の画面で、`mail`・`ml-cp`・MX・NS・TXT（SPF・DKIM）が変わっていないことを確認。
   4. Google Public DNS では直後から新しい値（A 4件、www は CNAME `kenji0618y.github.io.`）を返した。Cloudflareは古い値をキャッシュ中（TTL 3600のため最大1時間）。MX・SPFは両方とも変化なし。
+  5. GitHubが証明書を発行（対象：sauna-cospa.com と www.sauna-cospa.com）。Settings → Pages で「DNS check successful」を確認し、**Enforce HTTPS をオン**にした（利用者がログインし、オンにする操作を承認）。
+  6. 公開確認（`https://sauna-cospa.com/`）：トップ、`/reviews/`、`/map/`、`/sauna-university/`、`/sauna-daigaku.html`、`/sitemap.xml`、`/robots.txt`、日本語URL（テルマー湯・プライバシーポリシー）、旧WordPress形式の `/?page_id=37` がすべて200で `server: GitHub.com`。存在しないURLは404。Amazonの必須表記とAmazon枠も本番ドメインで表示。スマホ幅（390px）で表示崩れ・横はみ出しなし、トップの「レビュー一覧を見る」から一覧へ移動できる。
+  7. 転送：`www.sauna-cospa.com` と `kenji0618y.github.io` は `https://sauna-cospa.com/` へ、`http://` は `https://` へ301転送（トップだけGitHubのCDNキャッシュが最大10分残る）。
+  8. メール：MX（mail1004.conoha.ne.jp）、SPF、`mail`・`ml-cp` のAは変更なしを公開DNSで確認。
+- 判断と理由：www は A ではなく CNAME（`kenji0618y.github.io`）にした。GitHub公式の推奨設定で、www→本体の転送と証明書の対象に入るため。
+- 残作業：
+  1. 30日監視（2026-11-05ごろまで）：表示崩れ・404・アクセス解析を確認し、直すときはGitHub側だけで直す。
+  2. ConoHaは復旧用に残す。解約（フェーズ6）はAmazonの本審査完了と30日監視の後。ConoHa WINGの契約満了日は2027-07-01（ダッシュボードで確認）。DNSの置き場所（今はConoHaのネームサーバー）とConoHaメールの扱いを、解約前に決める必要がある。
+  3. 任意：GitHubのアカウント設定で `sauna-cospa.com` を「検証済みドメイン」にする（DNSにTXT 1件）。独自ドメインを外したときに第三者に使われるのを防ぐ。
+  4. Amazonアソシエイトの登録サイトに旧 `saunagomirachelin.wordpress.com` が残っていれば外す（利用者の画面操作）。
 
 ## Amazonアソシエイトの必須表記とAmazon枠の追加（2026-10-03・Claude）
 
