@@ -13,6 +13,11 @@
 - 変更するのは A `@` と A `www` だけ。`mail`・`ml-cp`・MX・NS・TXT（SPF・DKIM）は触らない（メールはConoHaのまま動く）。
 - 戻し方は `docs/dns-mail-公開記録.md` の「切替前の再確認と戻し方」。GitHub側は `CNAME` ファイルを削除すれば独自ドメイン登録が外れる。
 - 影響：`CNAME` 追加後は `kenji0618y.github.io` を開くと `sauna-cospa.com` へ転送される。DNS切替直後の数十分〜数時間は、GitHubの証明書発行まで https で警告が出ることがある。
+- **実施結果（2026-10-06）**：
+  1. `CNAME` をコミット `2764d1c` でmainへ反映。約1分後に `kenji0618y.github.io` が `http://sauna-cospa.com/` へ転送されることを確認（GitHub側の登録完了）。
+  2. ConoHaのDNSを2回に分けて保存し、どちらも「成功しました。DNS変更」を確認：(a) A `@` を 185.199.108.153 に変更し、185.199.109.153／185.199.110.153／185.199.111.153 を追加。(b) A `www`（157.120.209.148）を削除し、CNAME `www` → `kenji0618y.github.io` を追加。2回目の保存時に「A(通常) @ は一括変更されます」という確認が出たが、A `@` 4件の値は変えていないことを確認してから「はい」を押した。
+  3. 保存後の画面で、`mail`・`ml-cp`・MX・NS・TXT（SPF・DKIM）が変わっていないことを確認。
+  4. Google Public DNS では直後から新しい値（A 4件、www は CNAME `kenji0618y.github.io.`）を返した。Cloudflareは古い値をキャッシュ中（TTL 3600のため最大1時間）。MX・SPFは両方とも変化なし。
 
 ## Amazonアソシエイトの必須表記とAmazon枠の追加（2026-10-03・Claude）
 
