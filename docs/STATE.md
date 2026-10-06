@@ -2,7 +2,17 @@
 
 このファイルは、サイトの現在の状況やできていること、次にやることを記録するためのドキュメントです。
 
-最終更新：2026-10-03（Claude：Amazonアソシエイトの必須表記・Amazon枠）
+最終更新：2026-10-06（Claude：独自ドメインをGitHub Pagesへ切替中）
+
+## 独自ドメイン sauna-cospa.com をGitHub Pagesへ切替（2026-10-06・Claude）※進行中
+
+- 利用者の明示承認（2026-10-06）を得て実施。目的：Amazonアソシエイトの本審査が見る `sauna-cospa.com` をGitHub版（必須表記・Amazon枠あり、レビュー一覧404なし）にするため。
+- 手順（GitHub公式の推奨順）：①リポジトリ直下に `CNAME`（中身 `sauna-cospa.com`）を追加し、GitHub側で独自ドメインを先に登録 → ②ConoHaのDNSで、apex の A を GitHub Pages の4件へ、www を CNAME `kenji0618y.github.io` へ → ③証明書の発行を待って HTTPS を確認。
+- 判断と理由：GitHub側の登録をDNSより先にする。DNSだけ先にGitHubへ向けると、第三者が同じドメインを自分のPagesに登録できてしまう隙が生まれるため（GitHub公式ドキュメントの注意）。
+- ConoHaのDNSパネルで確認した現在の全レコード（公開DNSで見えなかった分も含む）：A `@` 157.120.209.148／A `mail` 160.251.148.14／A `ml-cp` 160.251.148.14／A `www` 157.120.209.148／MX `@` mail1004.conoha.ne.jp（優先度10）／NS ns-a1〜a3.conoha.io／TXT `@` SPF／TXT `default._domainkey`（DKIM）。TTLはすべて3600。
+- 変更するのは A `@` と A `www` だけ。`mail`・`ml-cp`・MX・NS・TXT（SPF・DKIM）は触らない（メールはConoHaのまま動く）。
+- 戻し方は `docs/dns-mail-公開記録.md` の「切替前の再確認と戻し方」。GitHub側は `CNAME` ファイルを削除すれば独自ドメイン登録が外れる。
+- 影響：`CNAME` 追加後は `kenji0618y.github.io` を開くと `sauna-cospa.com` へ転送される。DNS切替直後の数十分〜数時間は、GitHubの証明書発行まで https で警告が出ることがある。
 
 ## Amazonアソシエイトの必須表記とAmazon枠の追加（2026-10-03・Claude）
 
