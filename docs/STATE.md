@@ -1,5 +1,13 @@
 # サイトの現在の状態（STATE.md）
 
+## ⚠️ 重要：このリポジトリ（kenji0618y.github.io）に CNAME を足さないこと（2026-10-08）
+
+- **Do NOT add a CNAME to kenji0618y.github.io: it moves every project site (kekkon-roadmap, henshu-lock) to that domain. sauna-cospa.com lives in kenji0618y/sauna-cospa.**
+- 2026-10-06 にここへ `CNAME`（sauna-cospa.com）を足したところ、GitHubの仕様で同じアカウントのプロジェクトサイト（kekkon-roadmap・henshu-lock）まで `sauna-cospa.com/〜` へ転送され、結婚ロードマップの端末データとLINE通知が見えなくなった（公式：https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/about-custom-domains-and-github-pages ）。
+- 2026-10-08 にサウナのサイト（GOMIRACHELIN）を **https://github.com/kenji0618y/sauna-cospa** へ履歴ごと移し、独自ドメイン `sauna-cospa.com` はそちらに付け替えた。サイトの正本・作業記録の続きは sauna-cospa リポジトリ。
+- このリポジトリには、`sauna-cospa.com` へ転送するだけの `index.html`・`404.html`（外部スクリプトなし）と、2026-10-08 までの作業記録（docs/）だけを残している。ここにサイトのページや外部スクリプト（GTM・解析など）を戻さないこと。
+- DNS（ConoHa）は変更していない。www の CNAME `kenji0618y.github.io` はGitHubの推奨どおりで、プロジェクトリポジトリの独自ドメインでもこのままでよい。
+
 このファイルは、サイトの現在の状況やできていること、次にやることを記録するためのドキュメントです。
 
 最終更新：2026-10-06（Claude：独自ドメインをGitHub Pagesへ切替完了）
